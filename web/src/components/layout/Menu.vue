@@ -4,7 +4,7 @@
     <header class="header_section">
       <nav class="navbar navbar-expand-lg custom_nav-container">
         <a class="navbar-brand" href="index.html">
-          <span> Beauty Store </span>
+          <span> Healthy Care </span>
         </a>
         <button
           class="navbar-toggler"
