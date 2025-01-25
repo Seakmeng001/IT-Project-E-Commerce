@@ -56,7 +56,6 @@
                 {{ index }}
               </button>
             </li>
-  
             <li class="page-item">
               <button
                 class="page-link"
@@ -71,6 +70,7 @@
     </section>
   </template>
   <script>
+
   import fetchData from "../services/fetchData.js";
   import {RiShoppingCartLine} from 'vue-remix-icons';
   export default {
@@ -112,8 +112,6 @@
       console.error("Error adding product to cart:", error);
     }
   }
-  
     },
   };
   </script>
-  

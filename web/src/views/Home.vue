@@ -134,7 +134,7 @@
           </div>
         </div>
       </div>
-    <div class="btn-box">
+    <div class="btn-box ">
       <router-link to="/shop">
         View All Products
       </router-link>
@@ -490,7 +490,7 @@ export default {
       staticProducts: [
         {
           id: 1,
-          name: "Rom&nd Juicy Lasting Tint Israel",
+          name: "Cetaphil Moisturizing Cream",
           image: img2,
           price: 23.95,
           rating: 4,
@@ -500,7 +500,7 @@ export default {
         },
         {
           id: 2,
-          name: "3CE Velvet Lip Tint",
+          name: "Gentle Skin Cleanser",
           image: img1,
           price: 19.99,
           rating: 5,
@@ -510,7 +510,7 @@ export default {
         },
         {
           id: 3,
-          name: "Rom&nd Glow Glasting",
+          name: "Cetaphil Pro Ace Prone",
           image: img4,
           price: 14.95,
           rating: 5,
@@ -520,7 +520,7 @@ export default {
         },
         {
           id: 4,
-          name: "3Ce Tints and shades",
+          name: "Mattifying Ace Moisturizer",
           image: img3,
           price: 29.95,
           rating: 3,
@@ -645,20 +645,21 @@ export default {
 }
 
 .btn-cart {
-  background-color: #5a9adf;
+  background-color: #f16179;
+  border: 1px solid #f16179;
   color: #fff;
-  border: none;
   border-radius: 5px;
   padding: 8px 15px;
   cursor: pointer;
 }
 
 .btn-cart:hover {
-  background-color: gray;
+  background-color: transparent;
+  color: #f16179;
 }
 
 .icon {
-  margin-right: 8px; /* Adjust the value as needed */
+  margin-right: 8px;
 }
 
 </style>
