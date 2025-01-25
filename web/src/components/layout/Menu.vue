@@ -38,11 +38,11 @@
               <i class="fa fa-user" aria-hidden="true"></i>
               <span> Login </span>
             </router-link>
-            <span v-else style="margin-end:12px">
+            <span v-else style="margin-left:12px">
               <span>{{ isLogin }}</span> <span @click="logout()" class="text-secondary" style="cursor: pointer;;">Logout</span>
             </span>
             <router-link to="/cart">
-              <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
             </router-link>
           </div>
         </div>
@@ -88,7 +88,7 @@
                 <h5>Newsletter</h5>
                 <form action="#">
                   <input type="email" placeholder="Enter your email" />
-                  <button>Subscribe</button>
+                  <button>Subcribe</button>
                 </form>
               </div>
             </div>

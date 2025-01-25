@@ -32,7 +32,7 @@
                 class="btn btn-primary btn-cart"
                 @click="addToCart(product.id)"
               >
-                Add to Cart
+              <i class="fa fa-shopping-cart icon" aria-hidden="true"></i> Add to cart
               </button>
             </div>
           </div>
@@ -41,12 +41,11 @@
     </div>
   </section>
 </template>
-<script>
 
+<script>
 import img1 from "../../src/assets/images/3ce2.jpg";
 import img2 from "../../src/assets/images/romand2.jpg"
 import img3 from "../../src/assets/images/3ce1.jpg"
-
 
 export default {
   name: "Shop",
@@ -154,6 +153,11 @@ export default {
   margin-bottom: 20px;
 }
 
+.row {
+  row-gap: 20px; /* Space between rows */
+}
+
+
 /* Product Card Styling */
 .product-card {
   border: 1px solid #ddd;
@@ -236,7 +240,7 @@ export default {
 }
 
 .btn-cart {
-  background-color: #007bff;
+  background-color: #5a9adf;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -245,6 +249,10 @@ export default {
 }
 
 .btn-cart:hover {
-  background-color: #0056b3;
+  background-color: gray;
+}
+
+.icon {
+  margin-right: 8px;
 }
 </style>
