@@ -26,8 +26,8 @@
             <li class="nav-item" :class="{ active: isActive('/shop') }">
               <router-link to="/shop" class="nav-link"> Shop </router-link>
             </li>
-            <li class="nav-item" :class="{ active: isActive('/about') }">
-              <router-link to="/about" class="nav-link"> About Us </router-link>
+            <li class="nav-item" :class="{ active: isActive('/promotion') }">
+              <router-link to="/promotion" class="nav-link"> Promotion </router-link>
             </li>
             <li class="nav-item" :class="{ active: isActive('/contact') }">
               <router-link to="/contact" class="nav-link">Contact Us</router-link>
@@ -50,11 +50,7 @@
     </header>
     <!-- end header section -->
 
-    <!-- Start Content  -->
-    <slot></slot>
-    <!-- End Content  -->
     <!-- info section -->
-
     <section class="info_section layout_padding2-top">
       <div class="social_container">
         <div class="social_box">

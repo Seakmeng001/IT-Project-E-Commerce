@@ -3,11 +3,12 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">#</th>
+          <th scope="col">No</th>
           <th scope="col">Image</th>
-          <th scope="col">Name</th>
+          <th scope="col">Product</th>
           <th scope="col">Price</th>
-          <th scope="col">Action</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Subtotal</th>
         </tr>
       </thead>
       <tbody>

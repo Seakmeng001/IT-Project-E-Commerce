@@ -3,7 +3,7 @@ import LoginVue from './views/Login.vue';
 import RegisterVue from './views/Register.vue';
 import ShopVue from './views/Shop.vue';
 import CartVue from './views/Cart.vue';
-import AboutVue from './views/About.vue';
+import PromotionVue from './views/Promotion.vue';
 import ContactVue from './views/Contact.vue';
 import {createRouter, createWebHistory} from 'vue-router';
 
@@ -13,7 +13,7 @@ const routes = [
     {path: '/', name: 'home', component: HomeVue},
     {path: '/shop', name: 'shop', component: ShopVue},
     {path: '/cart', name: 'cart', component: CartVue},
-    {path: '/about', name: 'about', component: AboutVue},
+    {path: '/promotion', name: 'promotion', component: PromotionVue},
     {path: '/contact', name: 'contact', component: ContactVue},
 ]
 
