@@ -102,7 +102,6 @@
             Latest Products
           </h2>
         </div>
-
         <div class="row g-4">
         <div
           v-for="(product, index) in staticProducts"
@@ -161,7 +160,6 @@
                 </div>
                 <p>
                   At our shop, we prioritize providing exceptional service alongside our premium skincare products. Our knowledgeable team is dedicated to supporting you throughout your skincare journey, offering personalized recommendations, tips, and assistance. We strive to leave you feeling valued and empowered after every interaction, with prompt shipping, hassle-free returns, and responsive customer support ensuring a seamless and enjoyable experience. Trust us to be your partner in achieving radiant, healthy skin, as we exceed your expectations with our exceptional service at every turn.
-
                 </p>
               </div>
             </div>
@@ -417,7 +415,6 @@
         </div>
       </div>
     </section>
-    <!-- end gift section -->
 
     <!-- contact section -->
     <section class="contact_section ">
@@ -461,7 +458,6 @@
         </div>
       </div>
     </section>
-    <!-- end contact section -->
     </div>
   </template>
 
