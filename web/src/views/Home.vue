@@ -2,7 +2,6 @@
     <div>
       <div>
       <!-- slider section -->
-  
       <section class="slider_section">
         <div class="slider_container">
           <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -13,7 +12,7 @@
                     <div class="col-md-7">
                       <div class="detail-box">
                         <h1>
-                         Welcome to Beauty Store
+                          Welcome to Beauty Store
                         </h1>
                         <p>
                           Welcome to our skin care sanctuary! We're thrilled to have you here. We understand that taking care of your skin is more than just a routine—it's a journey towards confidence and self-care. Whether you're seeking solutions for specific concerns or simply looking to enhance your natural radiance, our curated collection of premium skincare products awaits you. Dive into a world of rejuvenation and indulgence, where each product is crafted with the finest ingredients and backed by cutting-edge research. Our mission is to empower you to embrace your unique beauty and glow from within. Explore our range, and let us guide you on your path to luminous, healthy skin. Welcome to a skincare experience like no other!
@@ -94,13 +93,8 @@
           </div>
         </div>
       </section>
-  
-      <!-- end slider section -->
     </div>
-    <!-- end hero area -->
-  
-    <!-- shop section -->
-  
+
     <section class="shop_section layout_padding">
       <div class="container">
         <div class="heading_container heading_center">
@@ -134,7 +128,6 @@
               </a>
             </div>
           </div>
-          
         </div>
         <div class="btn-box">
           <router-link to="/shop">
@@ -143,11 +136,7 @@
         </div>
       </div>
     </section>
-  
-    <!-- end shop section -->
-  
-    <!-- saving section -->
-  
+
     <section class="saving_section ">
       <div class="box pb-5">
         <div class="container-fluid">
@@ -175,11 +164,7 @@
         </div>
       </div>
     </section>
-  
-    <!-- end saving section -->
-  
-    <!-- why section -->
-  
+
     <section class="why_section layout_padding">
       <div class="container">
         <div class="heading_container heading_center">
@@ -283,7 +268,7 @@
                   Fast Delivery
                 </h5>
                 <p>
-                 Faster and get good products 
+                 Faster and get good products
                 </p>
               </div>
             </div>
@@ -427,47 +412,14 @@
         </div>
       </div>
     </section>
-  
     <!-- end why section -->
-  
-  
     <!-- gift section -->
-  
     <section class="gift_section layout_padding-bottom">
-      <!-- <div class="box ">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-5">
-              <div class="img_container">
-                <div class="img-box">
-                  <img src="#" alt="">
-                </div>
-              </div>
-            </div>
-            <div class="col-md-7 my-5">
-              <div class="detail-box">
-                <div class="heading_container">
-                  <h2>
-                    Gifts for your <br>
-                    loved ones
-                  </h2>
-                </div>
-                <p>
-                  Omnis ex nam laudantium odit illum harum, excepturi accusamus at corrupti, velit blanditiis unde perspiciatis, vitae minus culpa? Beatae at aut consequuntur porro adipisci aliquam eaque iste ducimus expedita accusantium?
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
+
     </section>
-  
-  
+
     <!-- end gift section -->
-  
-  
     <!-- contact section -->
-  
     <section class="contact_section ">
       <div class="container px-0">
         <div class="heading_container ">
@@ -509,10 +461,7 @@
         </div>
       </div>
     </section>
-  
     <!-- end contact section -->
-  
-    
     </div>
   </template>
 
@@ -553,7 +502,3 @@ export default {
     }
 }
 </script>
-
-
-
-  
