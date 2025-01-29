@@ -2,91 +2,118 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Services\BaseCrudController;
-use App\Models\Cart;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Validation\ValidationException;
+use App\Models\Cart;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class CartController extends BaseCrudController
+class CartController extends Controller
 {
-    protected $model = Cart::class;
-    public function getAll(Request $request)
+    /**
+     * Add product to cart
+     */
+    public function addToCart(Request $request)
     {
-        try {
-            $perPage = $request->query('per_page', 10);
-            $items = $this->model::paginate($perPage);
+        // Validate the request input
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
 
-            return response()->json($items, Response::HTTP_OK);
-        } catch (ValidationException $e) {
-            return $this->handleValidationException($e);
-        } catch (\Exception $e) {
-            return $this->handleUnexpectedException($e);
-        }
-    }
-    public function getByUser()
-    {
-        try {
-            $userId = auth()->user()->id;
+        // Check if the product already exists in the cart for the authenticated user
+        $cartItem = Cart::where('user_id', Auth::id())
+                        ->where('product_id', $request->product_id)
+                        ->first();
 
-            $items = Cart::join('products', 'carts.product_id', '=', 'products.id')
-                ->where('carts.user_id', $userId)
-                ->select('products.id as product_id', 'products.name', 'products.price', 'carts.id as cart_id', 'products.image as image')
-                ->get();
-
-            return response()->json($items, Response::HTTP_OK);
-        } catch (ValidationException $e) {
-            return $this->handleValidationException($e);
-        } catch (\Exception $e) {
-            return $this->handleUnexpectedException($e);
-        }
-    }
-    public function create(Request $request)
-    {
-        try {
-            $request->validate([
-                'product_id' => 'required|integer',
-            ]);
-            // Check if the user has already added the product to the cart
-            $existingCartItem = $this->model::where('user_id', auth()->user()->id)
-                ->where('product_id', $request->product_id)
-                ->first();
-
-            if ($existingCartItem) {
-                return response()->json(['message' => 'Product has already been added to the cart.'], Response::HTTP_CONFLICT);
-            }
-            $data = array(
-                'user_id' => auth()->user()->id,
+        if ($cartItem) {
+            // If the product is already in the cart, increment the quantity
+            $cartItem->quantity += $request->quantity;
+            $cartItem->save();
+        } else {
+            // If the product is not in the cart, create a new cart item with the specified quantity
+            Cart::create([
+                'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
-            );
-            $item = $this->model::create($data);
-            return response()->json($item, Response::HTTP_CREATED);
-        } catch (ValidationException $e) {
-            return $this->handleValidationException($e);
-        } catch (\Exception $e) {
-            return $this->handleUnexpectedException($e);
+                'quantity' => $request->quantity,
+            ]);
         }
+
+        // Return the updated cart or success message
+        $updatedCart = Cart::where('user_id', Auth::id())
+                           ->with('product')
+                           ->get();
+
+        return response()->json([
+            'message' => 'Product added to cart',
+            'cart' => $updatedCart
+        ]);
     }
-    public function delete($id)
+
+    /**
+     * View all cart items
+     */
+    public function viewCart()
     {
-        try {
-            $item = $this->model::find($id);
+        // Get all cart items for the authenticated user, including the product details
+        $cartItems = Cart::where('user_id', Auth::id())
+                         ->with('product') // Assuming each cart item is related to a product
+                         ->get();
 
-            if (!$item) {
-                return response()->json(['message' => $this->getModelName() . ' not found'], Response::HTTP_NOT_FOUND);
+        // Format the response to include product details, quantity, and price after discount
+        $formattedCart = $cartItems->map(function($cartItem) {
+            $product = $cartItem->product;
+            $priceAfterDiscount = $product->price - ($product->price * $product->discount / 100);
+
+            return [
+                'id' => $cartItem->id,
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'brand' => $product->brand,
+                'quantity' => $cartItem->quantity,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'price_after_discount' => $priceAfterDiscount,
+                'total' => $priceAfterDiscount * $cartItem->quantity,
+                'image' => $product->image,
+            ];
+        });
+
+        return response()->json($formattedCart);
+    }
+
+    /**
+     * Remove item from cart
+     */
+    public function removeFromCart($id)
+    {
+        // Find the cart item by ID for the authenticated user
+        $cartItem = Cart::where('id', $id)
+                        ->where('user_id', Auth::id())
+                        ->first();
+
+        if ($cartItem) {
+            // Check if the quantity is greater than 1
+            if ($cartItem->quantity > 1) {
+                // Decrease the quantity by 1
+                $cartItem->quantity -= 1;
+                $cartItem->save(); // Save the updated cart item
+                return response()->json([
+                    'message' => 'Item quantity decreased',
+                    'updated_quantity' => $cartItem->quantity,
+                    'cart' => Cart::where('user_id', Auth::id())->with('product')->get()
+                ]);
+            } else {
+                // If quantity is 1, remove the item completely
+                $cartItem->delete();
+                return response()->json([
+                    'message' => 'Item removed from cart',
+                    'cart' => Cart::where('user_id', Auth::id())->with('product')->get()
+                ]);
             }
-
-            if ($item->user_id != auth()->user()->id) {
-                return response()->json(['message' => $this->getModelName() . ' not found'], Response::HTTP_NOT_FOUND);
-            }
-
-            $item->delete();
-
-            return response()->json(['message' => $this->getModelName() . ' deleted successfully'], Response::HTTP_OK);
-        } catch (ValidationException $e) {
-            return $this->handleValidationException($e);
-        } catch (\Exception $e) {
-            return $this->handleUnexpectedException($e);
         }
+
+        // If the item doesn't exist, return an error message
+        return response()->json(['message' => 'Item not found'], 404);
     }
 }

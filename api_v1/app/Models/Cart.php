@@ -8,8 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'product_id',
+        'quantity', // Add quantity
     ];
+
+    // Relationship with Product model
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    // Relationship with User model
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

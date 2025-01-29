@@ -4,9 +4,13 @@
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => 'cart'], function () {
-    Route::get('/', [CartController::class, 'getAll'])->middleware('authorization:1,2');
-    Route::get('/cart', [CartController::class, 'getByUser'])->middleware('authorization:1,2');
-    Route::post('/', [CartController::class, 'create'])->middleware('authorization:1,2');
-    Route::delete('/{id}', [CartController::class, 'delete'])->middleware('authorization:1,2');
+Route::group(['prefix' => 'cart', 'middleware' => ['authorization:1,2']], function () {
+    // View all cart items
+    Route::get('/', [CartController::class, 'viewCart']);
+    
+    // Add item to cart
+    Route::post('/', [CartController::class, 'addToCart']);
+    
+    // Remove item from cart
+    Route::delete('/{id}', [CartController::class, 'removeFromCart']);
 });
