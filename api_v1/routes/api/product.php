@@ -8,6 +8,6 @@ Route::group(['prefix' => 'product'], function () {
     Route::get('/', [ProductController::class, 'getAll'])->middleware('authorization:1,2');
     Route::get('/{id}', [ProductController::class, 'getById'])->middleware('authorization:1,2');
     Route::post('/', [ProductController::class, 'create']);
-    Route::patch('/{id}', [ProductController::class, 'update'])->middleware('authorization:1');
+    Route::put('/{id}', [ProductController::class, 'update'])->middleware('authorization:1');
     Route::delete('/{id}', [ProductController::class, 'delete'])->middleware('authorization:1');
 });

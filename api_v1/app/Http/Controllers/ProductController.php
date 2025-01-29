@@ -42,6 +42,31 @@ class ProductController extends Controller
             return $this->handleUnexpectedException($e);
         }
     }
+    public function create(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'name' => 'required|min:3',
+                'brand' => 'required',
+                'price' => 'required',
+                'discount' => 'nullable',
+                'description' => 'nullable|min:3',
+                'category_id' => 'exists:categories,id',
+                'image' => 'required'
+            ]);
+            
+            $image = FileUploadController::storeImage($request->file('image'), 'uploads/products');
+            $data['image'] = $image;
+        
+            $product = Product::create($data);
+            
+            return response()->json( ['message' => 'Created successfully', 'product' => $product],Response::HTTP_OK);
+        } catch (ValidationException $e) {
+            return $this->handleValidationException($e);
+        } catch (\Exception $e) {
+            return $this->handleUnexpectedException($e);
+        }
+    }
     public function update(Request $request, string $id)
     {
         try {
@@ -76,6 +101,9 @@ class ProductController extends Controller
             // Update the product with the new data
             $product->update($data);
     
+            // Refresh the product to get the latest data from the database
+            $product->refresh();
+    
             // Return the updated product
             return response()->json([
                 'message' => 'Updated successfully',
@@ -85,9 +113,7 @@ class ProductController extends Controller
             return $this->handleValidationException($e);
         } catch (\Exception $e) {
             return $this->handleUnexpectedException($e);
-        }
-    }
-    
+        } }
     public function delete(string $id)
     {
         try {
