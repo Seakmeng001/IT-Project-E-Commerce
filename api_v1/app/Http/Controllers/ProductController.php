@@ -68,52 +68,49 @@ class ProductController extends Controller
         }
     }
     public function update(Request $request, string $id)
-    {
-        try {
-            // Validate the incoming request
-            $data = $request->validate([
-                'name' => 'nullable|min:3',
-                'brand' => 'nullable',
-                'price' => 'nullable|numeric',
-                'discount' => 'nullable|numeric',
-                'description' => 'nullable|min:3',
-                'category_id' => 'exists:categories,id',
-                'image' => 'nullable|image'
-            ]);
+{
+    try {
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'name' => 'nullable|string|min:3',
+            'brand' => 'nullable|string',
+            'price' => 'nullable|numeric',
+            'discount' => 'nullable|numeric',
+            'description' => 'nullable|string|min:3',
+            'category_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Ensure valid image format
+        ]);
+
+        // Find the product or fail
+        $product = Product::findOrFail($id);
+
+        // Handle image upload if provided
+        if ($request->hasFile('image')) {
+            $validatedData['image'] = FileUploadController::storeImage($request->file('image'), 'uploads/products');
+        }
+
+        // Update the product with only provided fields
+        $product->update(array_filter($validatedData)); // `array_filter` removes null values
+
+        // Return the updated product
+        return response()->json([
+            'message' => 'Updated successfully',
+            'product' => $product
+        ], Response::HTTP_OK);
+
+    } catch (ValidationException $e) {
+        return response()->json([
+            'message' => 'Validation error',
+            'errors' => $e->errors()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Something went wrong!',
+            'error' => $e->getMessage()
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
     
-            // Find the product by ID
-            $product = Product::find($id);
-            if (!$product) {
-                return response()->json(['message' => 'Product not found!'], Response::HTTP_NOT_FOUND);
-            }
-    
-            // Check if an image file has been uploaded
-            if ($request->hasFile('image')) {
-                $image = FileUploadController::storeImage($request->file('image'), 'uploads/products');
-                if ($image) {
-                    $data['image'] = $image; // Update the image if a new one is uploaded
-                }
-            } else {
-                // If no new image is uploaded, keep the existing image
-                $data['image'] = $product->image; // Retain the existing image
-            }
-    
-            // Update the product with the new data
-            $product->update($data);
-    
-            // Refresh the product to get the latest data from the database
-            $product->refresh();
-    
-            // Return the updated product
-            return response()->json([
-                'message' => 'Updated successfully',
-                'product' => $product // Return the updated product
-            ], Response::HTTP_OK);
-        } catch (ValidationException $e) {
-            return $this->handleValidationException($e);
-        } catch (\Exception $e) {
-            return $this->handleUnexpectedException($e);
-        } }
     public function delete(string $id)
     {
         try {
