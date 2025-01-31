@@ -11,6 +11,14 @@
         <span>Loading...</span>
       </div>
 
+      <!-- Alert Messages -->
+      <div v-if="successMessage" class="alert alert-success mt-4">
+        {{ successMessage }}
+      </div>
+      <div v-if="errorMessage" class="alert alert-danger mt-4">
+        {{ errorMessage }}
+      </div>
+
       <!-- Products Grid -->
       <div class="row g-4">
         <div
@@ -20,11 +28,12 @@
         >
           <div class="product-card">
             <div class="img-box position-relative">
-              <img :src="'http://127.0.0.1:8000' + product.image" alt="Product Image" />
+              <img
+                :src="'http://127.0.0.1:8000' + product.image"
+                alt="Product Image"
+              />
               <span v-if="product.isNew" class="badge badge-new">New</span>
-              <span v-if="product.isBestSeller" class="badge badge-best"
-                >Best Seller</span
-              >
+              <span v-if="product.isBestSeller" class="badge badge-best">Best Seller</span>
             </div>
             <div class="product-details">
               <h6 class="product-name">{{ product.name }}</h6>
@@ -42,8 +51,9 @@
                 <strong>{{ product.price }}$</strong>
               </div>
               <button
+                type="submit"
                 class="btn btn-primary btn-cart"
-                @click="addToCart(product)"
+                @click="addToCart(product.id)"
               >
                 Add to Cart
               </button>
@@ -77,8 +87,8 @@ export default {
     return {
       products: [],
       errorMessage: "",
+      successMessage: "",
       loading: false,
-      defaultImage: "path/to/default-image.jpg", // Default image in case the product doesn't have one
     };
   },
   methods: {
@@ -86,7 +96,6 @@ export default {
     async fetchProducts() {
       this.loading = true; // Set loading to true when fetching products
       const token = getCookie("token");
-      console.log(token);
 
       if (!token) {
         this.errorMessage = "No token found. Please log in.";
@@ -95,23 +104,19 @@ export default {
       }
 
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/product",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true, // Ensure credentials (cookies) are included
-          }
-        );
+        const response = await axios.get("http://127.0.0.1:8000/api/v1/product", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
 
-        this.products = response.data.data
-        console.log(this.products);
+        this.products = response.data.data;
       } catch (error) {
-        console.error("Error fetching products:", error);
         this.handleError(error);
       } finally {
         this.loading = false; // Set loading to false once data is fetched or error occurs
       }
     },
+
     // Handle error messages
     handleError(error) {
       if (error.response) {
@@ -121,16 +126,49 @@ export default {
       } else {
         this.errorMessage = "An unknown error occurred.";
       }
+
+      // Hide error message after 3 seconds
+      setTimeout(() => {
+        this.errorMessage = "";
+      }, 3000);
     },
 
-    // Add product to cart
-    addToCart(product) {
-      alert(`Product ${product.name} added to cart!`);
-      // You can add additional logic to manage the cart (e.g., using Vuex or localStorage)
+    // Add product to cart with success/error alert
+    async addToCart(productId) {
+      const quantity = 1;
+      const token = getCookie("token");
+
+      if (!token) {
+        this.errorMessage = "No token found. Please log in.";
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/v1/cart/",
+          { product_id: productId, quantity: quantity },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+
+        console.log("Product added to cart:", response.data);
+        this.successMessage = "Product added to cart successfully!";
+
+        // Hide the success message after 3 seconds
+        setTimeout(() => {
+          this.successMessage = "";
+        }, 3000);
+      } catch (error) {
+        this.handleError(error);
+      }
     },
   },
   mounted() {
-    // Fetch products when component is mounted
     this.fetchProducts();
   },
 };
@@ -152,6 +190,24 @@ export default {
   font-size: 20px;
   color: #007bff;
   margin-top: 20px;
+}
+
+/* Alert Messages */
+.alert {
+  text-align: center;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 /* Product Card Styling */
