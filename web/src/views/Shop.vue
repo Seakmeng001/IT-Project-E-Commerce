@@ -6,23 +6,36 @@
         <h2>Products List</h2>
       </div>
 
+      <!-- Loading Spinner -->
+      <div v-if="loading" class="loading-spinner">
+        <span>Loading...</span>
+      </div>
+
       <!-- Products Grid -->
       <div class="row g-4">
         <div
-          v-for="(product, index) in staticProducts"
+          v-for="(product, index) in products"
           :key="index"
           class="col-sm-6 col-md-4 col-lg-3"
         >
           <div class="product-card">
             <div class="img-box position-relative">
-              <img :src="product.image" alt="Product Image" />
+              <img :src="'http://127.0.0.1:8000' + product.image" alt="Product Image" />
               <span v-if="product.isNew" class="badge badge-new">New</span>
-              <span v-if="product.isBestSeller" class="badge badge-best">Best Seller</span>
+              <span v-if="product.isBestSeller" class="badge badge-best"
+                >Best Seller</span
+              >
             </div>
             <div class="product-details">
               <h6 class="product-name">{{ product.name }}</h6>
               <div class="rating">
-                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= product.rating }">★</span>
+                <span
+                  v-for="star in 5"
+                  :key="star"
+                  class="star"
+                  :class="{ filled: star <= product.rating }"
+                  >★</span
+                >
                 <span class="rating-count">({{ product.ratingCount }})</span>
               </div>
               <div class="price">
@@ -30,7 +43,7 @@
               </div>
               <button
                 class="btn btn-primary btn-cart"
-                @click="addToCart(product.id)"
+                @click="addToCart(product)"
               >
                 Add to Cart
               </button>
@@ -38,108 +51,87 @@
           </div>
         </div>
       </div>
+
+      <!-- Error Message -->
+      <div v-if="errorMessage" class="alert alert-danger mt-4">
+        {{ errorMessage }}
+      </div>
     </div>
   </section>
 </template>
+
 <script>
+import axios from "axios";
 
-import img1 from "../../src/assets/images/3ce2.jpg";
-import img2 from "../../src/assets/images/romand2.jpg"
-import img3 from "../../src/assets/images/3ce1.jpg"
-
+// Function to get cookie by name
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
+}
 
 export default {
   name: "Shop",
   data() {
     return {
-      staticProducts: [
-        {
-          id: 1,
-          name: "Rom&nd Juicy Lasting Tint Israel",
-          image: img2,
-          price: 23.95,
-          rating: 4,
-          ratingCount: 350,
-          isNew: true,
-          isBestSeller: false,
-        },
-        {
-          id: 2,
-          name: "3CE Velvet Lip Tint",
-          image: img1,
-          price: 19.99,
-          rating: 5,
-          ratingCount: 420,
-          isNew: false,
-          isBestSeller: true,
-        },
-        {
-          id: 3,
-          name: "Rom&nd Glow Glasting",
-          image: img2,
-          price: 14.95,
-          rating: 5,
-          ratingCount: 290,
-          isNew: false,
-          isBestSeller: false,
-        },
-        {
-          id: 4,
-          name: "3Ce Tints and shades",
-          image: img3,
-          price: 29.95,
-          rating: 3,
-          ratingCount: 120,
-          isNew: false,
-          isBestSeller: true,
-        },
-        {
-          id: 5,
-          name: "Rom&nd Juicy Lasting Tint Israel",
-          image: img2,
-          price: 23.95,
-          rating: 4,
-          ratingCount: 350,
-          isNew: true,
-          isBestSeller: false,
-        },
-        {
-          id: 6,
-          name: "3CE Velvet Lip Tint",
-          image: img1,
-          price: 19.99,
-          rating: 5,
-          ratingCount: 420,
-          isNew: false,
-          isBestSeller: true,
-        },
-        {
-          id: 7,
-          name: "Rom&nd Glow Glasting",
-          image: img2,
-          price: 14.95,
-          rating: 5,
-          ratingCount: 290,
-          isNew: false,
-          isBestSeller: false,
-        },
-        {
-          id: 8,
-          name: "3Ce Tints and shades",
-          image: img3,
-          price: 29.95,
-          rating: 3,
-          ratingCount: 120,
-          isNew: false,
-          isBestSeller: true,
-        },
-      ],
+      products: [],
+      errorMessage: "",
+      loading: false,
+      defaultImage: "path/to/default-image.jpg", // Default image in case the product doesn't have one
     };
   },
   methods: {
-    addToCart(productId) {
-      alert(`Product with ID ${productId} added to cart!`);
+    // Fetch products from API
+    async fetchProducts() {
+      this.loading = true; // Set loading to true when fetching products
+      const token = getCookie("token");
+      console.log(token);
+
+      if (!token) {
+        this.errorMessage = "No token found. Please log in.";
+        this.loading = false;
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/v1/product",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true, // Ensure credentials (cookies) are included
+          }
+        );
+
+        this.products = response.data.data
+        console.log(this.products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        this.handleError(error);
+      } finally {
+        this.loading = false; // Set loading to false once data is fetched or error occurs
+      }
     },
+    // Handle error messages
+    handleError(error) {
+      if (error.response) {
+        this.errorMessage = error.response.data.message || "An error occurred.";
+      } else if (error.request) {
+        this.errorMessage = "No response from the server.";
+      } else {
+        this.errorMessage = "An unknown error occurred.";
+      }
+    },
+
+    // Add product to cart
+    addToCart(product) {
+      alert(`Product ${product.name} added to cart!`);
+      // You can add additional logic to manage the cart (e.g., using Vuex or localStorage)
+    },
+  },
+  mounted() {
+    // Fetch products when component is mounted
+    this.fetchProducts();
   },
 };
 </script>
@@ -152,6 +144,14 @@ export default {
 
 .heading_center h2 {
   margin-bottom: 20px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  text-align: center;
+  font-size: 20px;
+  color: #007bff;
+  margin-top: 20px;
 }
 
 /* Product Card Styling */

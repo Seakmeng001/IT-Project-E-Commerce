@@ -42,6 +42,11 @@ export default {
     };
   },
   methods: {
+    setCookie(name, value, days = 7) {
+      const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Set expiration time for the cookie
+      document.cookie = `${name}=${value}; expires=${expires}; path=/`; // Set cookie
+    },
+
     async login() {
       try {
         const response = await fetchData(
@@ -52,10 +57,18 @@ export default {
             password: this.password,
           }
         );
+
         const token = response.authorisation.token;
         const name = response.user.name;
-        localStorage.setItem("token", token);
-        localStorage.setItem("name", name);
+
+        // Store token in cookies
+        this.setCookie("token", token);
+        this.setCookie("name", name);
+
+        // Optionally store a session cookie if you want it to expire when the browser closes
+        // document.cookie = `token=${token}; path=/`;
+
+        // Redirect user to home page or any other page after login
         this.$router.push({ name: "home" });
       } catch (error) {
         console.error("Error logging in:", error);
